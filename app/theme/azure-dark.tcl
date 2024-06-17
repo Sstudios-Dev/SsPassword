@@ -10,6 +10,9 @@ namespace eval ::ttk::theme::azure-dark {
             ttk::style configure TEntry -background #ecf0f1 -foreground #333333 -font {Arial 10} -padding 5
             ttk::style configure TText -background #ecf0f1 -foreground #333333 -font {Arial 10} -padding 5
             ttk::style configure TFrame -background #ecf0f1
+
+            # Style for when the mouse is over the button
+            ttk::style map TButton -background [list active #2980b9]
         }
     }
 }
