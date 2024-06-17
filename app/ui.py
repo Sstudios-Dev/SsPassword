@@ -16,16 +16,35 @@ def add_password():
         entry_website.delete(0, tk.END)
         entry_username.delete(0, tk.END)
         entry_password.delete(0, tk.END)
+        show_passwords(censored=True)  # Update the treeview with censored data
     else:
         messagebox.showwarning("Input Error", "All fields are required")
 
-def show_passwords():
+def show_passwords(filter_term=None, censored=True):
     passwords = retrieve_passwords()
-    text_passwords.config(state=tk.NORMAL)  # Enable the text widget to allow updates
-    text_passwords.delete(1.0, tk.END)  # Clear the text widget
+    for i in treeview.get_children():
+        treeview.delete(i)  # Clear the treeview
+
     for website, username, password in passwords:
-        text_passwords.insert(tk.END, f"Website: {website}, Username: {username}, Password: {password}\n")
-    text_passwords.config(state=tk.DISABLED)  # Disable the text widget to prevent user edits
+        if filter_term:
+            if filter_term.lower() in website.lower() or filter_term.lower() in username.lower():
+                display_password = '*' * len(password) if censored else password
+                treeview.insert("", "end", values=(website, username, display_password))
+        else:
+            display_password = '*' * len(password) if censored else password
+            treeview.insert("", "end", values=(website, username, display_password))
+
+def search_passwords():
+    filter_term = entry_search.get()
+    show_passwords(filter_term, censored=button_show_passwords.config('text')[-1] == "Show Passwords")
+
+def toggle_passwords():
+    if button_show_passwords.config('text')[-1] == "Show Passwords":
+        show_passwords(censored=False)
+        button_show_passwords.config(text="Hide Passwords")
+    else:
+        show_passwords(censored=True)
+        button_show_passwords.config(text="Show Passwords")
 
 def check_key():
     root = tk.Tk()
@@ -43,7 +62,7 @@ def check_key():
     return True
 
 def main():
-    global entry_website, entry_username, entry_password, text_passwords, treeview
+    global entry_website, entry_username, entry_password, treeview, entry_search, button_show_passwords
 
     app = tk.Tk()
     app.title("Password Manager")
@@ -83,6 +102,7 @@ def main():
 
     entry_search = ttk.Entry(frame_sidebar)
     entry_search.pack(fill='x')
+    entry_search.bind("<KeyRelease>", lambda event: search_passwords())  # Update the treeview on key release
 
     treeview = ttk.Treeview(frame_sidebar, columns=('Website', 'Username', 'Password'), show='headings')
     treeview.heading('Website', text='Website')
@@ -90,7 +110,7 @@ def main():
     treeview.heading('Password', text='Password')
     treeview.pack(fill='both', expand=True, pady=(10, 10))
 
-    button_show_passwords = ttk.Button(frame_sidebar, text="Show Passwords", command=show_passwords)
+    button_show_passwords = ttk.Button(frame_sidebar, text="Show Passwords", command=toggle_passwords)
     button_show_passwords.pack(fill='x')
 
     # Main area for adding passwords
@@ -117,6 +137,8 @@ def main():
     text_passwords = tk.Text(frame_notes, bg="#2E2E2E", fg="#00FF00", insertbackground="white")
     text_passwords.pack(fill='both', expand=True)
     text_passwords.config(state=tk.DISABLED)  # Initially disable the text widget
+
+    show_passwords(censored=True)  # Display all passwords initially censored
 
     app.mainloop()
 
