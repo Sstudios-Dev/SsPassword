@@ -43,10 +43,10 @@ def check_key():
     return True
 
 def main():
-    global entry_website, entry_username, entry_password, text_passwords
-    
+    global entry_website, entry_username, entry_password, text_passwords, treeview
+
     app = tk.Tk()
-    app.title("SsPassword")
+    app.title("Password Manager")
     
     # Custom styles
     style = ttk.Style(app)
@@ -70,27 +70,52 @@ def main():
     app.geometry(f"{window_width}x{window_height}")
 
     # Configure grid weights
-    app.grid_rowconfigure(5, weight=1)
+    app.grid_rowconfigure(1, weight=1)
     app.grid_columnconfigure(0, weight=1)
-    app.grid_columnconfigure(1, weight=1)
+    app.grid_columnconfigure(1, weight=2)
 
-    ttk.Label(app, text="Website").grid(row=0, column=0, sticky="w")
-    ttk.Label(app, text="Username").grid(row=1, column=0, sticky="w")
-    ttk.Label(app, text="Password").grid(row=2, column=0, sticky="w")
+    # Sidebar for password list
+    frame_sidebar = ttk.Frame(app, padding=(10, 10))
+    frame_sidebar.grid(row=0, column=0, rowspan=2, sticky="nswe")
 
-    entry_website = ttk.Entry(app)
-    entry_username = ttk.Entry(app)
-    entry_password = ttk.Entry(app, show="*")
+    label_search = ttk.Label(frame_sidebar, text="Search Vault")
+    label_search.pack(fill='x', pady=(0, 5))
 
-    entry_website.grid(row=0, column=1, sticky="ew")
-    entry_username.grid(row=1, column=1, sticky="ew")
-    entry_password.grid(row=2, column=1, sticky="ew")
+    entry_search = ttk.Entry(frame_sidebar)
+    entry_search.pack(fill='x')
 
-    ttk.Button(app, text="Add Password", command=add_password).grid(row=3, column=0, columnspan=2, sticky="ew")
-    ttk.Button(app, text="Show Passwords", command=show_passwords).grid(row=4, column=0, columnspan=2, sticky="ew")
+    treeview = ttk.Treeview(frame_sidebar, columns=('Website', 'Username', 'Password'), show='headings')
+    treeview.heading('Website', text='Website')
+    treeview.heading('Username', text='Username')
+    treeview.heading('Password', text='Password')
+    treeview.pack(fill='both', expand=True, pady=(10, 10))
 
-    text_passwords = tk.Text(app, bg="#2E2E2E", fg="#00FF00", insertbackground="white")
-    text_passwords.grid(row=5, column=0, columnspan=2, sticky="nsew")
+    button_show_passwords = ttk.Button(frame_sidebar, text="Show Passwords", command=show_passwords)
+    button_show_passwords.pack(fill='x')
+
+    # Main area for adding passwords
+    frame_main = ttk.Frame(app, padding=(10, 10))
+    frame_main.grid(row=0, column=1, sticky="nswe")
+
+    ttk.Label(frame_main, text="Website").grid(row=0, column=0, sticky="w", pady=(0, 5))
+    ttk.Label(frame_main, text="Username").grid(row=1, column=0, sticky="w", pady=(0, 5))
+    ttk.Label(frame_main, text="Password").grid(row=2, column=0, sticky="w", pady=(0, 5))
+
+    entry_website = ttk.Entry(frame_main)
+    entry_username = ttk.Entry(frame_main)
+    entry_password = ttk.Entry(frame_main, show="*")
+
+    entry_website.grid(row=0, column=1, sticky="ew", pady=(0, 5))
+    entry_username.grid(row=1, column=1, sticky="ew", pady=(0, 5))
+    entry_password.grid(row=2, column=1, sticky="ew", pady=(0, 5))
+
+    ttk.Button(frame_main, text="Add Password", command=add_password).grid(row=3, column=0, columnspan=2, sticky="ew", pady=(10, 0))
+
+    frame_notes = ttk.Frame(app, padding=(10, 10))
+    frame_notes.grid(row=1, column=1, sticky="nswe")
+
+    text_passwords = tk.Text(frame_notes, bg="#2E2E2E", fg="#00FF00", insertbackground="white")
+    text_passwords.pack(fill='both', expand=True)
     text_passwords.config(state=tk.DISABLED)  # Initially disable the text widget
 
     app.mainloop()
