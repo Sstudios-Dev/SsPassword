@@ -55,7 +55,7 @@ def check_key():
             create_key()
             messagebox.showinfo("Key Created", "The secret.key file has been created.")
         else:
-            messagebox.showwarning("Key Required", "The application cannot run without a secret.key file.")
+            messagebox.showerror("Key Required", "The application cannot run without a secret.key file for security reasons.")
             root.destroy()
             return False
     root.destroy()
@@ -145,3 +145,5 @@ def main():
 def run_app():
     if check_key():
         main()
+    else:
+        messagebox.showerror("Key Required", "The application cannot run without a secret.key file for security reasons.")
