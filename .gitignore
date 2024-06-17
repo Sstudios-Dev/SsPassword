@@ -1,0 +1,8 @@
+# Ignore the "carpeta de integrity" folder
+integrity/
+
+# Ignore the "passwords.db" file
+passwords.db
+
+# Ignore the "secret.key" file
+secret.key
