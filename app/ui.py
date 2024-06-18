@@ -4,6 +4,30 @@ from tkinter import ttk
 from app.manager import store_password, retrieve_passwords
 from app.encryption import check_or_create_key, create_key
 import os
+import ctypes
+import getpass
+
+def verify_windows_password(username, password):
+    LOGON32_LOGON_NETWORK = 3
+    LOGON32_PROVIDER_DEFAULT = 0
+
+    token = ctypes.c_void_p()
+    success = ctypes.windll.advapi32.LogonUserW(
+        username, None, password, LOGON32_LOGON_NETWORK, LOGON32_PROVIDER_DEFAULT, ctypes.byref(token)
+    )
+    if success:
+        ctypes.windll.kernel32.CloseHandle(token)
+    return success
+
+def login():
+    username = getpass.getuser()
+    password = entry_password.get()
+
+    if verify_windows_password(username, password):
+        login_window.destroy()
+        run_main_app()
+    else:
+        messagebox.showerror("Login Failed", "Incorrect password. Please try again.")
 
 def add_password():
     website = entry_website.get()
@@ -61,11 +85,11 @@ def check_key():
     root.destroy()
     return True
 
-def main():
+def run_main_app():
     global entry_website, entry_username, entry_password, treeview, entry_search, button_show_passwords
 
     app = tk.Tk()
-    app.title("Password Manager")
+    app.title("SsPassword - Home")
     
     # Custom styles
     style = ttk.Style(app)
@@ -142,8 +166,21 @@ def main():
 
     app.mainloop()
 
+def start_login():
+    global entry_password, login_window
+
+    login_window = tk.Tk()
+    login_window.title("SsPassword - Login")
+
+    tk.Label(login_window, text="Enter your Windows password to access the Password Manager:").pack(pady=10)
+    entry_password = tk.Entry(login_window, show="*")
+    entry_password.pack(pady=10)
+    tk.Button(login_window, text="Login", command=login).pack(pady=10)
+
+    login_window.mainloop()
+
 def run_app():
     if check_key():
-        main()
+        start_login()
     else:
         messagebox.showerror("Key Required", "The application cannot run without a secret.key file for security reasons.")
