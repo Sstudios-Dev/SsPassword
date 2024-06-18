@@ -178,14 +178,14 @@ def start_login():
     login_window = tk.Tk()
     login_window.title("SsPassword - Login")
 
-    tk.Label(login_window, text="Enter your Windows password to access the Password Manager:").pack(pady=10)
+    tk.Label(login_window, text="Enter your Windows password to access the SsPassword:").pack(pady=10)
     entry_password = tk.Entry(login_window, show="*")
     entry_password.pack(pady=10)
 
     show_password_var = tk.BooleanVar()
     show_password_checkbutton = tk.Checkbutton(login_window, text="Show Password", variable=show_password_var, command=toggle_password)
     show_password_checkbutton.pack(pady=5)
-    
+
     tk.Button(login_window, text="Login", command=login).pack(pady=10)
 
     login_window.mainloop()
