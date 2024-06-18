@@ -14,13 +14,13 @@ save_key(key)
 
 # Customized theme
 
-```tcl package ifneeded azure-dark 1.0.0
+```tcl package ifneeded azure-default 1.0.0
 
-namespace eval ::ttk::theme::azure-dark {
+namespace eval ::ttk::theme::azure-default {
     variable version 1.0.0
 
     proc Theme {} {
-        ttk::style theme create azure-dark -parent default -settings {
+        ttk::style theme create azure-default -parent default -settings {
             ttk::style configure TButton -background #3498db -foreground #ffffff -font {Arial 10} -padding {5 10}
             ttk::style configure TLabel -foreground #333333 -font {Arial 10 bold}
             ttk::style configure TEntry -background #ecf0f1 -foreground #333333 -font {Arial 10} -padding 5
@@ -33,6 +33,6 @@ namespace eval ::ttk::theme::azure-dark {
     }
 }
 
-if {[info commands ::ttk::theme::azure-dark::Theme] ne ""} {
-    ::ttk::theme::azure-dark::Theme
+if {[info commands ::ttk::theme::azure-default::Theme] ne ""} {
+    ::ttk::theme::azure-default::Theme
 } ```
