@@ -92,6 +92,7 @@ def check_key():
     return True
 
 def open_settings():
+    global settings_window
     settings_window = tk.Toplevel()
     settings_window.title("SsPassword - Settings")
 
@@ -117,6 +118,7 @@ def save_settings(selected_theme):
             app.tk.call('source', theme_path)
             style.theme_use(selected_theme.split('.')[0])  # Use the theme name without extension
             messagebox.showinfo("Settings Saved", "Your settings have been saved successfully.")
+            settings_window.destroy()  # Close the settings window
         except tk.TclError as e:
             messagebox.showerror("Theme Error", f"Failed to use theme: {e}")
     else:
@@ -234,4 +236,3 @@ def run_app():
         start_login()
     else:
         messagebox.showerror("Key Required", "The application cannot run without a secret.key file for security reasons.")
-        
