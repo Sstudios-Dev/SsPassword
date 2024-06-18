@@ -91,24 +91,55 @@ def check_key():
     root.destroy()
     return True
 
+def open_settings():
+    settings_window = tk.Toplevel()
+    settings_window.title("SsPassword - Settings")
+
+    ttk.Label(settings_window, text="Settings").pack(pady=10)
+    
+    ttk.Label(settings_window, text="Theme").pack(pady=5)
+    theme_var = tk.StringVar(settings_window)
+    themes = get_themes()
+    theme_menu = ttk.OptionMenu(settings_window, theme_var, *themes)
+    theme_menu.pack(pady=5)
+
+    ttk.Button(settings_window, text="Save Settings", command=lambda: save_settings(theme_var.get())).pack(pady=10)
+
+def get_themes():
+    theme_path = os.path.join(os.path.dirname(__file__), "theme")
+    themes = [f for f in os.listdir(theme_path) if f.endswith('.tcl')]
+    return themes
+
+def save_settings(selected_theme):
+    theme_path = os.path.join(os.path.dirname(__file__), "theme", selected_theme)
+    if os.path.exists(theme_path):
+        try:
+            app.tk.call('source', theme_path)
+            style.theme_use(selected_theme.split('.')[0])  # Use the theme name without extension
+            messagebox.showinfo("Settings Saved", "Your settings have been saved successfully.")
+        except tk.TclError as e:
+            messagebox.showerror("Theme Error", f"Failed to use theme: {e}")
+    else:
+        messagebox.showerror("Theme Error", f"Theme file not found: {theme_path}")
+
 def run_main_app():
-    global entry_website, entry_username, entry_password, treeview, entry_search, button_show_passwords
+    global entry_website, entry_username, entry_password, treeview, entry_search, button_show_passwords, app, style
 
     app = tk.Tk()
     app.title("SsPassword - Home")
     
     # Custom styles
     style = ttk.Style(app)
-    theme_path = os.path.join(os.path.dirname(__file__), "theme", "azure-default.tcl")
-    if os.path.exists(theme_path):
+    default_theme_path = os.path.join(os.path.dirname(__file__), "theme", "azure-default.tcl")
+    if os.path.exists(default_theme_path):
         try:
-            app.tk.call('source', theme_path)  # Load the azure-default theme from the specified path
+            app.tk.call('source', default_theme_path)  # Load the azure-default theme from the specified path
             style.theme_use('azure-default')
         except tk.TclError as e:
             messagebox.showerror("Theme Error", f"Failed to use theme: {e}")
             return
     else:
-        messagebox.showerror("Theme Error", f"Theme file not found: {theme_path}")
+        messagebox.showerror("Theme Error", f"Theme file not found: {default_theme_path}")
         return
 
     # Set window size
@@ -168,6 +199,14 @@ def run_main_app():
     text_passwords.pack(fill='both', expand=True)
     text_passwords.config(state=tk.DISABLED)  # Initially disable the text widget
 
+    # Menu bar
+    menu_bar = tk.Menu(app)
+    app.config(menu=menu_bar)
+
+    file_menu = tk.Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Configuration", menu=file_menu)
+    file_menu.add_command(label="Settings", command=open_settings)
+
     show_passwords(censored=True)  # Display all passwords initially censored
 
     app.mainloop()
@@ -195,3 +234,4 @@ def run_app():
         start_login()
     else:
         messagebox.showerror("Key Required", "The application cannot run without a secret.key file for security reasons.")
+        
