@@ -93,11 +93,11 @@ def run_main_app():
     
     # Custom styles
     style = ttk.Style(app)
-    theme_path = os.path.join(os.path.dirname(__file__), "theme", "azure-dark.tcl")
+    theme_path = os.path.join(os.path.dirname(__file__), "theme", "azure-default.tcl")
     if os.path.exists(theme_path):
         try:
-            app.tk.call('source', theme_path)  # Load the azure-dark theme from the specified path
-            style.theme_use('azure-dark')
+            app.tk.call('source', theme_path)  # Load the azure-default theme from the specified path
+            style.theme_use('azure-default')
         except tk.TclError as e:
             messagebox.showerror("Theme Error", f"Failed to use theme: {e}")
             return
