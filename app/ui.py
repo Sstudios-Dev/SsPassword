@@ -19,6 +19,12 @@ def verify_windows_password(username, password):
         ctypes.windll.kernel32.CloseHandle(token)
     return success
 
+def toggle_password():
+    if entry_password.cget('show') == '*':
+        entry_password.config(show='')
+    else:
+        entry_password.config(show='*')
+
 def login():
     username = getpass.getuser()
     password = entry_password.get()
@@ -175,6 +181,11 @@ def start_login():
     tk.Label(login_window, text="Enter your Windows password to access the Password Manager:").pack(pady=10)
     entry_password = tk.Entry(login_window, show="*")
     entry_password.pack(pady=10)
+
+    show_password_var = tk.BooleanVar()
+    show_password_checkbutton = tk.Checkbutton(login_window, text="Show Password", variable=show_password_var, command=toggle_password)
+    show_password_checkbutton.pack(pady=5)
+    
     tk.Button(login_window, text="Login", command=login).pack(pady=10)
 
     login_window.mainloop()
