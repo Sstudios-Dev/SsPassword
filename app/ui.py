@@ -6,6 +6,9 @@ from app.encryption import check_or_create_key, create_key
 import os
 import ctypes
 import getpass
+import json
+
+CONFIG_FILE = 'integrity/config.json'
 
 def verify_windows_password(username, password):
     LOGON32_LOGON_NETWORK = 3
@@ -106,6 +109,10 @@ def open_settings():
 
     ttk.Button(settings_window, text="Save Settings", command=lambda: save_settings(theme_var.get())).pack(pady=10)
 
+    # Load current theme into the option menu
+    config = load_config()
+    theme_var.set(config.get('theme', 'azure-default.tcl'))
+
 def get_themes():
     theme_path = os.path.join(os.path.dirname(__file__), "theme")
     themes = [f for f in os.listdir(theme_path) if f.endswith('.tcl')]
@@ -117,12 +124,23 @@ def save_settings(selected_theme):
         try:
             app.tk.call('source', theme_path)
             style.theme_use(selected_theme.split('.')[0])  # Use the theme name without extension
+            save_config({'theme': selected_theme})  # Save the selected theme to config
             messagebox.showinfo("Settings Saved", "Your settings have been saved successfully.")
             settings_window.destroy()  # Close the settings window
         except tk.TclError as e:
             messagebox.showerror("Theme Error", f"Failed to use theme: {e}")
     else:
         messagebox.showerror("Theme Error", f"Theme file not found: {theme_path}")
+
+def save_config(config):
+    with open(CONFIG_FILE, 'w') as f:
+        json.dump(config, f)
+
+def load_config():
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, 'r') as f:
+            return json.load(f)
+    return {}
 
 def run_main_app():
     global entry_website, entry_username, entry_password, treeview, entry_search, button_show_passwords, app, style
@@ -132,16 +150,18 @@ def run_main_app():
     
     # Custom styles
     style = ttk.Style(app)
-    default_theme_path = os.path.join(os.path.dirname(__file__), "theme", "azure-default.tcl")
-    if os.path.exists(default_theme_path):
+    config = load_config()
+    selected_theme = config.get('theme', 'azure-default.tcl')
+    theme_path = os.path.join(os.path.dirname(__file__), "theme", selected_theme)
+    if os.path.exists(theme_path):
         try:
-            app.tk.call('source', default_theme_path)  # Load the azure-default theme from the specified path
-            style.theme_use('azure-default')
+            app.tk.call('source', theme_path)  # Load the selected theme from the specified path
+            style.theme_use(selected_theme.split('.')[0])  # Use the theme name without extension
         except tk.TclError as e:
             messagebox.showerror("Theme Error", f"Failed to use theme: {e}")
             return
     else:
-        messagebox.showerror("Theme Error", f"Theme file not found: {default_theme_path}")
+        messagebox.showerror("Theme Error", f"Theme file not found: {theme_path}")
         return
 
     # Set window size
