@@ -260,7 +260,6 @@ def open_more_info():
     if response:
         webbrowser.open("https://github.com/Sstudios-Dev/SsPassword/wiki/Why-do-I-need-to-enter-my-Windows-password%3F")
 
-
 def start_login():
     global entry_password, login_window
 
@@ -284,7 +283,7 @@ def start_login():
     entry_password.pack(pady=20)
 
     show_password_var = tk.BooleanVar()
-    show_password_checkbutton = ttk.Checkbutton(login_window, text="Show Password", variable=show_password_var)
+    show_password_checkbutton = ttk.Checkbutton(login_window, text="Show Password", variable=show_password_var, command=toggle_password)
     show_password_checkbutton.pack(pady=10)
 
     more_info_label = tk.Label(login_window, text="Why do I need to enter my Windows password?", bg="#2e3f4f", fg="blue", font=label_font, cursor="hand2")
@@ -308,7 +307,7 @@ def start_login():
         'pady': 10,
     }
 
-    login_button = tk.Button(login_window, text="Login", **custom_button_style)
+    login_button = tk.Button(login_window, text="Login", command=login, **custom_button_style)
     login_button.pack(pady=20)
 
     login_window.mainloop()
