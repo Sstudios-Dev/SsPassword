@@ -266,6 +266,9 @@ def open_more_info():
 def start_login():
     global entry_password, login_window
 
+    def on_enter_pressed(event):
+        login()
+
     login_window = tk.Tk()
     login_window.title("SsPassword - Login")
     screen_width = login_window.winfo_screenwidth()
@@ -284,6 +287,7 @@ def start_login():
 
     entry_password = ttk.Entry(login_window, show="*", width=30, font=label_font)
     entry_password.pack(pady=20)
+    entry_password.bind("<Return>", on_enter_pressed)
 
     show_password_var = tk.BooleanVar()
     show_password_checkbutton = ttk.Checkbutton(login_window, text="Show Password", variable=show_password_var, command=toggle_password)
