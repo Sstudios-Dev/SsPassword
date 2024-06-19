@@ -258,7 +258,7 @@ def run_main_app():
 def open_more_info():
     response = tk.messagebox.askyesno("SsPassword", "Are you sure you want to open the web browser?")
     if response:
-        webbrowser.open("https://github.com/Sstudios-Dev/SsPassword/wiki")
+        webbrowser.open("https://github.com/Sstudios-Dev/SsPassword/wiki/Why-do-I-need-to-enter-my-Windows-password%3F")
 
 
 def start_login():
