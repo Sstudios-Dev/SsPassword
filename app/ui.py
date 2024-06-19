@@ -198,6 +198,14 @@ def run_main_app():
     app.grid_columnconfigure(0, weight=1)
     app.grid_columnconfigure(1, weight=2)
 
+    # Menu bar
+    menu_bar = tk.Menu(app)
+    app.config(menu=menu_bar)
+
+    file_menu = tk.Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Configuration", menu=file_menu)
+    file_menu.add_command(label="Style Chooser", command=open_settings)
+
     # Sidebar for password list
     frame_sidebar = ttk.Frame(app, padding=(10, 10))
     frame_sidebar.grid(row=0, column=0, rowspan=2, sticky="nswe")
@@ -213,6 +221,9 @@ def run_main_app():
     treeview.heading('Website', text='Website')
     treeview.heading('Username', text='Username')
     treeview.heading('Password', text='Password')
+    treeview.column('Website', width=150)
+    treeview.column('Username', width=150)
+    treeview.column('Password', width=150)
     treeview.pack(fill='both', expand=True, pady=(10, 10))
 
     button_show_passwords = ttk.Button(frame_sidebar, text="Show Passwords", command=toggle_passwords)
@@ -242,14 +253,6 @@ def run_main_app():
     text_passwords = tk.Text(frame_notes, bg="#2E2E2E", fg="#00FF00", insertbackground="white")
     text_passwords.pack(fill='both', expand=True)
     text_passwords.config(state=tk.DISABLED)  # Initially disable the text widget
-
-    # Menu bar
-    menu_bar = tk.Menu(app)
-    app.config(menu=menu_bar)
-
-    file_menu = tk.Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="Configuration", menu=file_menu)
-    file_menu.add_command(label="Style Chooser", command=open_settings)
 
     show_passwords(censored=True)  # Display all passwords initially censored
 
