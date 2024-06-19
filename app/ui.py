@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
+from tkinter import font
 from app.manager import store_password, retrieve_passwords
 from app.encryption import check_or_create_key, create_key
 import os
@@ -97,28 +98,48 @@ def check_key():
 def open_settings():
     global settings_window
     settings_window = tk.Toplevel()
-    settings_window.title("SsPassword - Settings")
-
-    ttk.Label(settings_window, text="Settings").pack(pady=10)
+    settings_window.title("Style Chooser")
+    settings_window.geometry("400x300")
     
-    ttk.Label(settings_window, text="Theme").pack(pady=5)
+    # Title
+    title_label = ttk.Label(settings_window, text="Select the style in which this site should be shown", font=('Arial', 12, 'bold'))
+    title_label.pack(pady=20)
+
+    # Use default style checkbox
+    use_default_var = tk.BooleanVar()
+    use_default_check = ttk.Checkbutton(settings_window, text="Use default style", variable=use_default_var)
+    use_default_check.pack(anchor='w', padx=20, pady=5)
+
+    # Theme selection
+    theme_label = ttk.Label(settings_window, text="Choose Theme", font=('Arial', 10, 'bold'))
+    theme_label.pack(anchor='w', padx=20, pady=(20, 5))
+
     theme_var = tk.StringVar(settings_window)
     themes = get_themes()
-    theme_menu = ttk.OptionMenu(settings_window, theme_var, *themes)
-    theme_menu.pack(pady=5)
+    theme_menu = ttk.Combobox(settings_window, textvariable=theme_var, values=themes, state='readonly')
+    theme_menu.pack(anchor='w', padx=20, pady=5)
 
-    ttk.Button(settings_window, text="Save Settings", command=lambda: save_settings(theme_var.get())).pack(pady=10)
-
-    # Load current theme into the option menu
+    # Load current theme into the combobox
     config = load_config()
     theme_var.set(config.get('theme', 'azure-default.tcl'))
+
+    # Save button
+    save_button = ttk.Button(settings_window, text="Save Settings", command=lambda: save_settings(theme_var.get(), use_default_var.get()))
+    save_button.pack(pady=20)
+
+    # Cancel button
+    cancel_button = ttk.Button(settings_window, text="Cancel", command=settings_window.destroy)
+    cancel_button.pack()
 
 def get_themes():
     theme_path = os.path.join(os.path.dirname(__file__), "theme")
     themes = [f for f in os.listdir(theme_path) if f.endswith('.tcl')]
     return themes
 
-def save_settings(selected_theme):
+def save_settings(selected_theme, use_default):
+    if use_default:
+        selected_theme = 'azure-default.tcl'
+    
     theme_path = os.path.join(os.path.dirname(__file__), "theme", selected_theme)
     if os.path.exists(theme_path):
         try:
@@ -227,7 +248,7 @@ def run_main_app():
 
     file_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Configuration", menu=file_menu)
-    file_menu.add_command(label="Settings", command=open_settings)
+    file_menu.add_command(label="Style Chooser", command=open_settings)
 
     show_passwords(censored=True)  # Display all passwords initially censored
 
@@ -238,18 +259,47 @@ def start_login():
 
     login_window = tk.Tk()
     login_window.title("SsPassword - Login")
+    login_window.geometry("600x400")
+    login_window.configure(bg="#2e3f4f")
 
-    tk.Label(login_window, text="Enter your Windows password to access the SsPassword:").pack(pady=10)
-    entry_password = tk.Entry(login_window, show="*")
-    entry_password.pack(pady=10)
+    title_font = font.Font(family="Helvetica", size=36, weight="bold")
+    label_font = font.Font(family="Helvetica", size=18)
+
+    title_label = tk.Label(login_window, text="SsPassword", bg="#2e3f4f", fg="white", font=title_font)
+    title_label.pack(pady=20)
+
+    instruction_label = tk.Label(login_window, text="Enter your Windows password to access SsPassword:", bg="#2e3f4f", fg="white", font=label_font)
+    instruction_label.pack(pady=20)
+
+    entry_password = ttk.Entry(login_window, show="*", width=30, font=label_font)
+    entry_password.pack(pady=20)
 
     show_password_var = tk.BooleanVar()
-    show_password_checkbutton = tk.Checkbutton(login_window, text="Show Password", variable=show_password_var, command=toggle_password)
-    show_password_checkbutton.pack(pady=5)
+    show_password_checkbutton = ttk.Checkbutton(login_window, text="Show Password", variable=show_password_var, command=toggle_password)
+    show_password_checkbutton.pack(pady=10)
 
-    tk.Button(login_window, text="Login", command=login).pack(pady=10)
+    style = ttk.Style()
+    style.configure('TLabel', background="#2e3f4f", foreground="white", font=label_font)
+    style.configure('TCheckbutton', background="#2e3f4f", foreground="white", font=label_font)
+
+    custom_button_style = {
+        'font': label_font,
+        'background': '#4caf50',
+        'foreground': 'white',
+        'borderwidth': 0,
+        'activebackground': '#388e3c',
+        'activeforeground': 'white',
+        'highlightthickness': 0,
+        'relief': 'flat',
+        'padx': 20,
+        'pady': 10,
+    }
+
+    login_button = tk.Button(login_window, text="Login", command=login, **custom_button_style)
+    login_button.pack(pady=20)
 
     login_window.mainloop()
+
 
 def run_app():
     if check_key():
