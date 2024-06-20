@@ -109,38 +109,51 @@ def check_key():
 def open_settings():
     global settings_window
     settings_window = tk.Toplevel()
-    settings_window.title("Style Chooser")
+    settings_window.title("Settings")
     settings_window.geometry("400x300")
     
+    # Styling
+    settings_window.configure(bg="#f0f0f0")
+    settings_window.resizable(False, False)
+
     # Title
-    title_label = ttk.Label(settings_window, text="Select the style in which this site should be shown", font=('Arial', 12, 'bold'))
-    title_label.pack(pady=20)
+    title_label = ttk.Label(settings_window, text="Settings", font=('Arial', 24, 'bold'), background="#f0f0f0", foreground="#333")
+    title_label.pack(pady=(20, 10))
 
     # Use default style checkbox
     use_default_var = tk.BooleanVar()
-    use_default_check = ttk.Checkbutton(settings_window, text="Use default style", variable=use_default_var)
+    
+    # Configure a custom style for the checkbox
+    style = ttk.Style()
+    style.configure('Custom.TCheckbutton', background="#f0f0f0")
+
+    use_default_check = ttk.Checkbutton(settings_window, text="Use default style", variable=use_default_var, style='Custom.TCheckbutton')
     use_default_check.pack(anchor='w', padx=20, pady=5)
 
     # Theme selection
-    theme_label = ttk.Label(settings_window, text="Choose Theme", font=('Arial', 10, 'bold'))
+    theme_label = ttk.Label(settings_window, text="Choose Theme", font=('Arial', 18, 'bold'), background="#f0f0f0", foreground="#333")
     theme_label.pack(anchor='w', padx=20, pady=(20, 5))
 
     theme_var = tk.StringVar(settings_window)
     themes = get_themes()
-    theme_menu = ttk.Combobox(settings_window, textvariable=theme_var, values=themes, state='readonly')
+    theme_menu = ttk.Combobox(settings_window, textvariable=theme_var, values=themes, state='readonly', font=('Arial', 12), width=20)
     theme_menu.pack(anchor='w', padx=20, pady=5)
 
     # Load current theme into the combobox
     config = load_config()
     theme_var.set(config.get('theme', 'azure-default.tcl'))
 
+    # Button Frame
+    button_frame = ttk.Frame(settings_window, padding=(0, 20))
+    button_frame.pack(fill='x', padx=20)
+
     # Save button
-    save_button = ttk.Button(settings_window, text="Save Settings", command=lambda: save_settings(theme_var.get(), use_default_var.get()))
-    save_button.pack(pady=20)
+    save_button = ttk.Button(button_frame, text="Save", command=lambda: save_settings(theme_var.get(), use_default_var.get()), style='TButton', width=10)
+    save_button.pack(side='left', padx=(0, 10))
 
     # Cancel button
-    cancel_button = ttk.Button(settings_window, text="Cancel", command=settings_window.destroy)
-    cancel_button.pack()
+    cancel_button = ttk.Button(button_frame, text="Cancel", command=settings_window.destroy, style='TButton', width=10)
+    cancel_button.pack(side='left')
 
 def get_themes():
     theme_path = os.path.join(os.path.dirname(__file__), "..", "integrity", "theme")
