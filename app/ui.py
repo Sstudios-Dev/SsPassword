@@ -227,36 +227,60 @@ def run_main_app():
     treeview.pack(fill='both', expand=True, pady=(10, 10))
 
     button_show_passwords = ttk.Button(frame_sidebar, text="Show Passwords", command=toggle_passwords)
-    button_show_passwords.pack(fill='x')
+    button_show_passwords.pack(pady=(10, 0))
 
-    # Main area for adding passwords
+    # Main content frame for adding passwords
     frame_main = ttk.Frame(app, padding=(10, 10))
-    frame_main.grid(row=0, column=1, sticky="nswe")
+    frame_main.grid(row=0, column=1, sticky="nsew")
+    treeview.heading('Username', text='Username')
+    treeview.heading('Password', text='Password')
+    treeview.pack(fill='both', expand=True, pady=(10, 0))
 
-    ttk.Label(frame_main, text="Website").grid(row=0, column=0, sticky="w", pady=(0, 5))
-    ttk.Label(frame_main, text="Username").grid(row=1, column=0, sticky="w", pady=(0, 5))
-    ttk.Label(frame_main, text="Password").grid(row=2, column=0, sticky="w", pady=(0, 5))
-
+    label_website = ttk.Label(frame_main, text="Website")
+    label_website.grid(row=0, column=0, sticky="w")
     entry_website = ttk.Entry(frame_main)
+    entry_website.grid(row=0, column=1, pady=(0, 5), sticky="ew")
+
+    label_username = ttk.Label(frame_main, text="Username")
+    label_username.grid(row=1, column=0, sticky="w")
     entry_username = ttk.Entry(frame_main)
-    entry_password = ttk.Entry(frame_main, show="*")
+    entry_username.grid(row=1, column=1, pady=(0, 5), sticky="ew")
 
-    entry_website.grid(row=0, column=1, sticky="ew", pady=(0, 5))
-    entry_username.grid(row=1, column=1, sticky="ew", pady=(0, 5))
-    entry_password.grid(row=2, column=1, sticky="ew", pady=(0, 5))
+    label_password = ttk.Label(frame_main, text="Password")
+    label_password.grid(row=2, column=0, sticky="w")
+    entry_password = ttk.Entry(frame_main)
+    entry_password.grid(row=2, column=1, pady=(0, 5), sticky="ew")
 
-    ttk.Button(frame_main, text="Add Password", command=add_password).grid(row=3, column=0, columnspan=2, sticky="ew", pady=(10, 0))
+    button_toggle_password = ttk.Button(frame_main, text="Show/Hide", command=toggle_password)
+    button_toggle_password.grid(row=2, column=2, pady=(0, 5))
 
-    frame_notes = ttk.Frame(app, padding=(10, 10))
-    frame_notes.grid(row=1, column=1, sticky="nswe")
+    button_add_password = ttk.Button(frame_main, text="Add Password", command=add_password)
+    button_add_password.grid(row=3, column=1, pady=(10, 0), sticky="ew")
 
-    text_passwords = tk.Text(frame_notes, bg="#2E2E2E", fg="#00FF00", insertbackground="white")
-    text_passwords.pack(fill='both', expand=True)
-    text_passwords.config(state=tk.DISABLED)  # Initially disable the text widget
+    # Frame for updates and news
+    frame_updates = ttk.Frame(app, padding=(10, 10))
+    frame_updates.grid(row=1, column=1, sticky="nsew")
 
-    show_passwords(censored=True)  # Display all passwords initially censored
+    label_updates = ttk.Label(frame_updates, text="Updates and News v1.0", font=("Helvetica", 16))
+    label_updates.pack(pady=(0, 10))
+
+    text_updates = tk.Text(frame_updates, height=10, wrap="word")
+    text_updates.pack(fill='both', expand=True)
+
+    # Example content for updates
+    updates_content = """
+    - New feature: Added support for custom themes.
+    - Improvement: Enhanced password encryption.
+    - Bug fix: Resolved issue with password retrieval.
+    - Update: Improved user interface and experience.
+    """
+    text_updates.insert(tk.END, updates_content)
+    text_updates.config(state=tk.DISABLED)  # Disable text editing
+
+    show_passwords()
 
     app.mainloop()
+
 
 def open_more_info():
     response = tk.messagebox.askyesno("SsPassword", "Are you sure you want to open the web browser?")
