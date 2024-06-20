@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkinter import font
 from app.manager import store_password, retrieve_passwords
 from app.encryption import check_or_create_key, create_key
+from .version import get_latest_release_info, check_for_updates,  CURRENT_VERSION
 import os
 import ctypes
 import getpass
@@ -142,7 +143,7 @@ def open_settings():
     cancel_button.pack()
 
 def get_themes():
-    theme_path = os.path.join(os.path.dirname(__file__), "theme")
+    theme_path = os.path.join(os.path.dirname(__file__), "..", "integrity", "theme")
     themes = [f for f in os.listdir(theme_path) if f.endswith('.tcl')]
     return themes
 
@@ -150,7 +151,7 @@ def save_settings(selected_theme, use_default):
     if use_default:
         selected_theme = 'azure-default.tcl'
     
-    theme_path = os.path.join(os.path.dirname(__file__), "theme", selected_theme)
+    theme_path = os.path.join(os.path.dirname(__file__), "..", "integrity", "theme", selected_theme)
     if os.path.exists(theme_path):
         try:
             app.tk.call('source', theme_path)
@@ -183,7 +184,7 @@ def run_main_app():
     style = ttk.Style(app)
     config = load_config()
     selected_theme = config.get('theme', 'azure-default.tcl')
-    theme_path = os.path.join(os.path.dirname(__file__), "theme", selected_theme)
+    theme_path = os.path.join(os.path.dirname(__file__), "..", "integrity", "theme", selected_theme)
     if os.path.exists(theme_path):
         try:
             app.tk.call('source', theme_path)  # Load the selected theme from the specified path
@@ -227,65 +228,52 @@ def run_main_app():
     entry_search.bind("<KeyRelease>", lambda event: search_passwords())  # Update the treeview on key release
 
     treeview = ttk.Treeview(frame_sidebar, columns=('Website', 'Username', 'Password'), show='headings')
+    treeview.pack(expand=True, fill='both', pady=10)
     treeview.heading('Website', text='Website')
     treeview.heading('Username', text='Username')
     treeview.heading('Password', text='Password')
-    treeview.column('Website', width=150)
-    treeview.column('Username', width=150)
-    treeview.column('Password', width=150)
-    treeview.pack(fill='both', expand=True, pady=(10, 10))
 
     button_show_passwords = ttk.Button(frame_sidebar, text="Show Passwords", command=toggle_passwords)
     button_show_passwords.pack(pady=(10, 0))
 
-    # Main content frame for adding passwords
+    # Main content area
     frame_main = ttk.Frame(app, padding=(10, 10))
-    frame_main.grid(row=0, column=1, sticky="nsew")
-    treeview.heading('Username', text='Username')
-    treeview.heading('Password', text='Password')
-    treeview.pack(fill='both', expand=True, pady=(10, 0))
+    frame_main.grid(row=0, column=1, sticky="nswe")
 
     label_website = ttk.Label(frame_main, text="Website")
-    label_website.grid(row=0, column=0, sticky="w")
+    label_website.pack(fill='x', pady=(0, 5))
+
     entry_website = ttk.Entry(frame_main)
-    entry_website.grid(row=0, column=1, pady=(0, 5), sticky="ew")
+    entry_website.pack(fill='x', pady=(0, 10))
 
     label_username = ttk.Label(frame_main, text="Username")
-    label_username.grid(row=1, column=0, sticky="w")
+    label_username.pack(fill='x', pady=(0, 5))
+
     entry_username = ttk.Entry(frame_main)
-    entry_username.grid(row=1, column=1, pady=(0, 5), sticky="ew")
+    entry_username.pack(fill='x', pady=(0, 10))
 
     label_password = ttk.Label(frame_main, text="Password")
-    label_password.grid(row=2, column=0, sticky="w")
-    entry_password = ttk.Entry(frame_main)
-    entry_password.grid(row=2, column=1, pady=(0, 5), sticky="ew")
+    label_password.pack(fill='x', pady=(0, 5))
 
-    button_toggle_password = ttk.Button(frame_main, text="Show/Hide", command=toggle_password)
-    button_toggle_password.grid(row=2, column=2, pady=(0, 5))
+    entry_password = ttk.Entry(frame_main, show='*')
+    entry_password.pack(fill='x', pady=(0, 10))
+
+    button_toggle_password = ttk.Button(frame_main, text="Show Password", command=toggle_password)
+    button_toggle_password.pack(pady=(0, 10))
 
     button_add_password = ttk.Button(frame_main, text="Add Password", command=add_password)
-    button_add_password.grid(row=3, column=1, pady=(10, 0), sticky="ew")
+    button_add_password.pack(pady=(0, 10))
 
-    # Frame for updates and news
-    frame_updates = ttk.Frame(app, padding=(10, 10))
-    frame_updates.grid(row=1, column=1, sticky="nsew")
+    frame_version = ttk.Frame(app, padding=(10, 10))
+    frame_version.grid(row=1, column=1, sticky="ew")
 
-    label_updates = ttk.Label(frame_updates, text="Updates and News v1.0", font=("Helvetica", 16))
-    label_updates.pack(pady=(0, 10))
+    label_version = ttk.Label(frame_version, text=f"Version: {CURRENT_VERSION}")
+    label_version.pack(side='left')
 
-    text_updates = tk.Text(frame_updates, height=10, wrap="word")
-    text_updates.pack(fill='both', expand=True)
+    button_check_updates = ttk.Button(frame_version, text="Check for Updates", command=check_for_updates)
+    button_check_updates.pack(side='right')
 
-    # Example content for updates
-    updates_content = """
-    - New feature: Added support for custom themes.
-    - Improvement: Enhanced password encryption.
-    - Bug fix: Resolved issue with password retrieval.
-    - Update: Improved user interface and experience.
-    """
-    text_updates.insert(tk.END, updates_content)
-    text_updates.config(state=tk.DISABLED)  # Disable text editing
-
+    # Load and display the initial passwords
     show_passwords()
 
     app.mainloop()
