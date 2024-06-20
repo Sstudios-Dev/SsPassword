@@ -11,6 +11,8 @@ import json
 import webbrowser
 
 CONFIG_FILE = 'integrity/config.json'
+FAILED_ATTEMPTS_LIMIT = 5
+failed_attempts = 0
 
 def verify_windows_password(username, password):
     LOGON32_LOGON_NETWORK = 3
@@ -31,14 +33,21 @@ def toggle_password():
         entry_password.config(show='*')
 
 def login():
+    global failed_attempts
     username = getpass.getuser()
     password = entry_password.get()
 
     if verify_windows_password(username, password):
+        failed_attempts = 0
         login_window.destroy()
         run_main_app()
     else:
-        messagebox.showerror("Login Failed", "Incorrect password. Please try again.")
+        failed_attempts += 1
+        if failed_attempts >= FAILED_ATTEMPTS_LIMIT:
+            messagebox.showerror("Login Failed", "Too many failed attempts. The application will now close.")
+            login_window.destroy()
+        else:
+            messagebox.showerror("Login Failed", f"Incorrect password. {FAILED_ATTEMPTS_LIMIT - failed_attempts} attempts remaining.")
 
 def add_password():
     website = entry_website.get()
