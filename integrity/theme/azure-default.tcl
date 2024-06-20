@@ -5,7 +5,7 @@ namespace eval ::ttk::theme::azure-default {
 
     proc Theme {} {
         ttk::style theme create azure-default -parent default -settings {
-            ttk::style configure TButton -background #3498db -foreground #ffffff -font {Arial 10 bold} -padding {8 12} -borderwidth 2 -relief groove
+            ttk::style configure TButton -background #3498db -foreground #ffffff -font {Arial 10 bold} -padding {8 12} -borderwidth 0 -borderradius 5
             ttk::style map TButton -background [list active #2980b9]
             ttk::style configure TLabel -foreground #333333 -font {Arial 10 bold}
             ttk::style configure TEntry -background #ecf0f1 -foreground #333333 -font {Arial 10} -padding 5 -borderwidth 1 -relief solid
