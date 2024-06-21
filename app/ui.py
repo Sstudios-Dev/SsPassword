@@ -10,6 +10,8 @@ import ctypes
 import getpass
 import json
 import webbrowser
+import requests
+import shutil
 
 CONFIG_FILE = 'integrity/config.json'
 FAILED_ATTEMPTS_LIMIT = 5
@@ -107,30 +109,19 @@ def check_key():
     return True
 
 def open_settings():
-    global settings_window
     settings_window = tk.Toplevel()
-    settings_window.title("Settings")
+    settings_window.title("Style Chooser")
     settings_window.geometry("400x300")
-    
-    # Styling
     settings_window.configure(bg="#f0f0f0")
     settings_window.resizable(False, False)
 
-    # Title
-    title_label = ttk.Label(settings_window, text="Settings", font=('Arial', 24, 'bold'), background="#f0f0f0", foreground="#333")
+    title_label = ttk.Label(settings_window, text="Settings styles", font=('Arial', 24, 'bold'), background="#f0f0f0", foreground="#333")
     title_label.pack(pady=(20, 10))
 
-    # Use default style checkbox
     use_default_var = tk.BooleanVar()
-    
-    # Configure a custom style for the checkbox
-    style = ttk.Style()
-    style.configure('Custom.TCheckbutton', background="#f0f0f0")
-
     use_default_check = ttk.Checkbutton(settings_window, text="Use default style", variable=use_default_var, style='Custom.TCheckbutton')
     use_default_check.pack(anchor='w', padx=20, pady=5)
 
-    # Theme selection
     theme_label = ttk.Label(settings_window, text="Choose Theme", font=('Arial', 18, 'bold'), background="#f0f0f0", foreground="#333")
     theme_label.pack(anchor='w', padx=20, pady=(20, 5))
 
@@ -139,19 +130,15 @@ def open_settings():
     theme_menu = ttk.Combobox(settings_window, textvariable=theme_var, values=themes, state='readonly', font=('Arial', 12), width=20)
     theme_menu.pack(anchor='w', padx=20, pady=5)
 
-    # Load current theme into the combobox
     config = load_config()
     theme_var.set(config.get('theme', 'azure-default.tcl'))
 
-    # Button Frame
     button_frame = ttk.Frame(settings_window, padding=(0, 20))
     button_frame.pack(fill='x', padx=20)
 
-    # Save button
-    save_button = ttk.Button(button_frame, text="Save", command=lambda: save_settings(theme_var.get(), use_default_var.get()), style='TButton', width=10)
+    save_button = ttk.Button(button_frame, text="Save", command=lambda: save_settings(settings_window, theme_var.get(), use_default_var.get()), style='TButton', width=10)
     save_button.pack(side='left', padx=(0, 10))
 
-    # Cancel button
     cancel_button = ttk.Button(button_frame, text="Cancel", command=settings_window.destroy, style='TButton', width=10)
     cancel_button.pack(side='left')
 
@@ -160,7 +147,7 @@ def get_themes():
     themes = [f for f in os.listdir(theme_path) if f.endswith('.tcl')]
     return themes
 
-def save_settings(selected_theme, use_default):
+def save_settings(settings_window, selected_theme, use_default):
     if use_default:
         selected_theme = 'azure-default.tcl'
     
@@ -168,10 +155,10 @@ def save_settings(selected_theme, use_default):
     if os.path.exists(theme_path):
         try:
             app.tk.call('source', theme_path)
-            style.theme_use(selected_theme.split('.')[0])  # Use the theme name without extension
-            save_config({'theme': selected_theme})  # Save the selected theme to config
+            style.theme_use(selected_theme.split('.')[0])
+            save_config({'theme': selected_theme})
             messagebox.showinfo("Settings Saved", "Your settings have been saved successfully.")
-            settings_window.destroy()  # Close the settings window
+            settings_window.destroy()
         except tk.TclError as e:
             messagebox.showerror("Theme Error", f"Failed to use theme: {e}")
     else:
@@ -228,6 +215,7 @@ def run_main_app():
     file_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Configuration", menu=file_menu)
     file_menu.add_command(label="Style Chooser", command=open_settings)
+    file_menu.add_command(label="Plugin Manager", command=open_plugin_manager)
 
     # Sidebar for password list
     frame_sidebar = ttk.Frame(app, padding=(10, 10))
@@ -352,6 +340,77 @@ def start_login():
     login_button.pack(pady=20)
 
     login_window.mainloop()
+
+def create_plugins_folder():
+    plugins_folder = os.path.join(os.path.dirname(__file__), "..", "plugins")
+    if not os.path.exists(plugins_folder):
+        os.makedirs(plugins_folder)
+
+def open_plugin_manager():
+    plugin_manager_window = tk.Toplevel()
+    plugin_manager_window.title("Plugin Manager")
+    plugin_manager_window.geometry("400x400")
+    plugin_manager_window.configure(bg="#f0f0f0")
+    plugin_manager_window.resizable(False, False)
+
+    title_label = ttk.Label(plugin_manager_window, text="Plugin Manager", font=('Arial', 24, 'bold'), background="#f0f0f0", foreground="#333")
+    title_label.pack(pady=(20, 10))
+
+    # Create the plugins folder if it doesn't exist
+    plugins_folder = os.path.join(os.path.dirname(__file__), "..", "plugins")
+    if os.path.exists(plugins_folder):
+        installed_plugins_frame = ttk.LabelFrame(plugin_manager_window, text="Installed Plugins", padding="10")
+        installed_plugins_frame.pack(pady=(10, 5), padx=20, fill='both', expand=True)
+
+        plugins = [f for f in os.listdir(plugins_folder) if os.path.isfile(os.path.join(plugins_folder, f))]
+        if plugins:
+            for plugin in plugins:
+                plugin_label = ttk.Label(installed_plugins_frame, text=plugin, font=('Arial', 12), background="#f0f0f0", foreground="#333")
+                plugin_label.pack(pady=5, anchor='w')
+        else:
+            no_plugins_label = ttk.Label(installed_plugins_frame, text="No plugins installed", font=('Arial', 12), background="#f0f0f0", foreground="#333")
+            no_plugins_label.pack(pady=5)
+    else:
+        create_plugins_folder()
+        messagebox.showinfo("Folder Created", "Plugins folder created. Please restart the application.")
+
+    available_plugins_frame = ttk.LabelFrame(plugin_manager_window, text="Available Plugins", padding="10")
+    available_plugins_frame.pack(pady=(5, 10), padx=20, fill='both', expand=True)
+
+    # Define your custom list of plugins
+    custom_plugins = ["tcl_editor.py"]
+
+    if custom_plugins:
+        for plugin in custom_plugins:
+            plugin_label = ttk.Label(available_plugins_frame, text=plugin, font=('Arial', 12), background="#f0f0f0", foreground="#333")
+            plugin_label.pack(pady=5, anchor='w')
+    else:
+        no_plugins_label = ttk.Label(available_plugins_frame, text="No plugins available", font=('Arial', 12), background="#f0f0f0", foreground="#333")
+        no_plugins_label.pack(pady=5)
+
+def download_plugin(plugin_name):
+    if not plugin_name:
+        messagebox.showwarning("Download Plugin", "Please enter a plugin name.")
+        return
+
+    plugin_url = f"https://raw.githubusercontent.com/Sstudios-Dev/SsPassword/main/plugins/{plugin_name}"
+
+    plugins_folder = os.path.join(os.path.dirname(__file__), "..", "plugins")
+    if not os.path.exists(plugins_folder):
+        os.makedirs(plugins_folder)
+
+    plugin_path = os.path.join(plugins_folder, plugin_name)
+
+    try:
+        response = requests.get(plugin_url, stream=True)
+        response.raise_for_status()
+
+        with open(plugin_path, 'wb') as plugin_file:
+            shutil.copyfileobj(response.raw, plugin_file)
+
+        messagebox.showinfo("Download Plugin", f"Plugin '{plugin_name}' downloaded successfully.")
+    except requests.RequestException as e:
+        messagebox.showerror("Download Plugin", f"Failed to download plugin: {e}")
 
 def run_app():
     if check_key():
