@@ -17,6 +17,13 @@ CONFIG_FILE = 'integrity/config.json'
 FAILED_ATTEMPTS_LIMIT = 5
 failed_attempts = 0
 
+def open_help():
+    help_file_path = os.path.join(os.path.dirname(__file__), "web", "help.html")
+    if os.path.exists(help_file_path):
+        webbrowser.open(f"file://{help_file_path}")
+    else:
+        messagebox.showerror("File Not Found", "The help file was not found.")
+
 def verify_windows_password(username, password):
     LOGON32_LOGON_NETWORK = 3
     LOGON32_PROVIDER_DEFAULT = 0
@@ -217,6 +224,10 @@ def run_main_app():
     file_menu.add_command(label="Style Chooser", command=open_settings)
     file_menu.add_command(label="Plugin Manager", command=open_plugin_manager)
 
+    help_menu = tk.Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Help", menu=help_menu)
+    help_menu.add_command(label="Open Help", command=open_help)
+    
     # Sidebar for password list
     frame_sidebar = ttk.Frame(app, padding=(10, 10))
     frame_sidebar.grid(row=0, column=0, rowspan=2, sticky="nswe")
