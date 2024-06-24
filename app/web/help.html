@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SsPassword - Help</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <main class="container mx-auto p-6">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-4">Help Center</h1>
+            <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                Welcome to the Help Center. Here you can find information about how to use the application.
+            </p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Getting Started</h2>
+            <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                This guide will help you get started with the basics.
+            </p>
+            <ul class="list-disc pl-6 mt-4 text-gray-600 dark:text-gray-300 text-lg">
+                <li>Create your secret.key</li>
+                <li>Navigating the application</li>
+                <li>Registering a password in the local database</li>
+                <li>Configure the app</li>
+                <li>Change the app theme</li>
+            </ul>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Frequently Asked Questions</h2>
+            <div class="mb-4 border-b border-gray-300 pb-4">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">What is the secret.key for?</h3>
+                <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                    The secret key (secret.key) is used to encrypt all passwords stored in the locally generated database.
+                    This key is generated completely randomly, ensuring a high level of security for the passwords.
+                    By using the secret key to encrypt the passwords, an additional layer of protection is added, meaning that even if the database is compromised, the passwords will remain secure and cannot be accessed without the corresponding secret key. This encryption method ensures that passwords are optimally protected,
+                    providing peace of mind and confidence in the security of the data.
+                </p>
+            </div>
+            <div class="mb-4 border-b border-gray-300 pb-4">
+                <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Why do I need to enter my Windows password?</h3>
+                <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                    SsPassword is an application designed to ensure security and protection of user data when accessing the application. This tool focuses on secure password management and requires the user's Windows password for authentication purposes when logging into the application.
+                </p>
+                <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Motivation</h4>
+                <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                    The primary reason behind requesting the user's Windows password is to enhance security and protect user privacy. By requesting the Windows password upon entering the application, an additional layer of security is added to help prevent unauthorized access and ensure that only authorized users can access the information stored in the application.
+                </p>
+                <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Key Features</h4>
+                <ul class="list-disc pl-6 mt-4 text-gray-600 dark:text-gray-300 text-lg">
+                    <li>Enhanced Security: The user's Windows password is used as an additional security measure to protect user data.</li>
+                    <li>Protection of Sensitive Data: SsPassword strives to ensure the confidentiality and integrity of user data.</li>
+                    <li>Windows Compatibility: The application is designed to work in Windows environments and utilizes the security infrastructure provided by the operating system.</li>
+                </ul>
+                <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mt-4">Security Notice</h4>
+                <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                    The user's Windows password is requested solely for authentication purposes within the application and is neither shared nor improperly stored. SsPassword is committed to protecting the privacy and security of its users.
+                </p>
+            </div>
+        </div>
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Contact Us</h2>
+            <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                If you need further assistance, please contact our support team.
+            </p>
+            <br>
+            <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                Email: sstudiosdev@gmail.com
+            </p>
+            <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                issues: https://github.com/Sstudios-Dev/SsPassword/issues
+            </p>
+            <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+                Server discord:  https://discord.gg/NbMhtfsgr6
+            </p>
+        </div>
+    </main>
+    <div class="flex justify-end fixed bottom-0 right-0 m-4">
+        <button onclick="toggleDarkMode()" class="p-2 rounded-md bg-gray-800 text-white mr-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-moon-stars-fill" viewBox="0 0 16 16">
+                <path d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278"/>
+                <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.73 1.73 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.73 1.73 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.73 1.73 0 0 0 1.097-1.097zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z"/>
+              </svg>
+        </button>
+        <button onclick="toggleLightMode()" class="p-2 rounded-md bg-gray-300 text-gray-800">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-brightness-high-fill" viewBox="0 0 16 16">
+                <path d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"/>
+              </svg>
+        </button>
+    </div>
+
+    <div id="modal" class="hidden fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-4 rounded-md shadow-sm">
+            <h2 class="text-gray-800 text-xl mb-2">Función en Desarrollo</h2>
+            <p class="text-gray-800 text-base mb-2">¡Gracias por tu paciencia! Estamos trabajando duro para mejorar tu experiencia con SsPassword. Aquí hay más detalles sobre lo que estamos desarrollando actualmente:</p> <!-- Modifiqué el tamaño del texto -->
+            <ul class="text-gray-800 text-sm">
+                <li>Actualizaciones de seguridad para proteger mejor tus contraseñas.</li>
+                <li>Nuevas funciones para una gestión de contraseñas más eficiente.</li>
+                <li>Mejoras en la interfaz de usuario para hacer SsPassword más intuitivo.</li>
+                <li>Correcciones de errores y mejoras de rendimiento para una experiencia sin problemas.</li>
+            </ul>
+            <button onclick="closeModal()" class="mt-4 px-6 py-2 rounded-lg bg-gradient-to-r from-purple-700 to-indigo-700 text-white flex items-center justify-center space-x-2"> <!-- Botón con gradiente y colores oscuros -->
+                <span>Cerrar</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 0 1 1.414 0L10 8.586l4.293-4.293a1 1 0 1 1 1.414 1.414L11.414 10l4.293 4.293a1 1 0 0 1-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 0 1-1.414-1.414L8.586 10 4.293 5.707a1 1 0 0 1 0-1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+    </div>    
+    
+
+<script>
+        function toggleDarkMode() {
+            document.body.classList.add('dark');
+            showModal();
+        }
+
+        function toggleLightMode() {
+            document.body.classList.remove('dark');
+            showModal();
+        }
+
+        function showModal() {
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
