@@ -359,12 +359,37 @@ def open_plugin_manager():
     plugin_manager_window.configure(bg="#f0f0f0")
     plugin_manager_window.resizable(False, False)
 
-    title_label = ttk.Label(plugin_manager_window, text="Plugin Manager", font=('Arial', 24, 'bold'), background="#f0f0f0", foreground="#333")
+    # Añadimos un frame para el canvas y la scrollbar
+    canvas_frame = tk.Frame(plugin_manager_window)
+    canvas_frame.pack(fill=tk.BOTH, expand=True)
+
+    # Creamos un canvas para el scroll
+    canvas = tk.Canvas(canvas_frame, bg="#f0f0f0")
+    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    scrollbar = ttk.Scrollbar(canvas_frame, orient="vertical", command=canvas.yview)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    # Añadimos un frame dentro del canvas
+    scrollable_frame = ttk.Frame(canvas, style='TFrame')
+
+    scrollable_frame.bind(
+        "<Configure>",
+        lambda e: canvas.configure(
+            scrollregion=canvas.bbox("all")
+        )
+    )
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+
+    title_label = ttk.Label(scrollable_frame, text="Plugin Manager", font=('Arial', 24, 'bold'), background="#f0f0f0", foreground="#333")
     title_label.pack(pady=(20, 10))
 
     plugins_folder = os.path.join(os.path.dirname(__file__), "..", "plugins")
     if os.path.exists(plugins_folder):
-        installed_plugins_frame = ttk.LabelFrame(plugin_manager_window, text="Installed Plugins", padding="10")
+        installed_plugins_frame = ttk.LabelFrame(scrollable_frame, text="Installed Plugins", padding="10")
         installed_plugins_frame.pack(pady=(10, 5), padx=20, fill='both', expand=True)
 
         plugins = [f for f in os.listdir(plugins_folder) if os.path.isfile(os.path.join(plugins_folder, f))]
@@ -379,7 +404,7 @@ def open_plugin_manager():
         create_plugins_folder()
         messagebox.showinfo("Folder Created", "Plugins folder created. Please restart the application.")
 
-    available_plugins_frame = ttk.LabelFrame(plugin_manager_window, text="Available Plugins", padding="10")
+    available_plugins_frame = ttk.LabelFrame(scrollable_frame, text="Available Plugins", padding="10")
     available_plugins_frame.pack(pady=(5, 10), padx=20, fill='both', expand=True)
 
     custom_plugins = ["tcl_editor.py"]
@@ -391,8 +416,8 @@ def open_plugin_manager():
 
     available_plugins_listbox.bind('<<ListboxSelect>>', on_plugin_select)
 
-    download_button = ttk.Button(plugin_manager_window, text="Download", state=tk.DISABLED)
-    download_button.pack(pady=10)
+    download_button = ttk.Button(scrollable_frame, text="Download", state=tk.DISABLED)
+    download_button.pack(pady=(10, 20))
 
 def download_plugin(plugin_name):
     if not plugin_name:
