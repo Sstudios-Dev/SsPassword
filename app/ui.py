@@ -347,6 +347,12 @@ def create_plugins_folder():
         os.makedirs(plugins_folder)
 
 def open_plugin_manager():
+    def on_plugin_select(event):
+        if available_plugins_listbox.curselection():
+            selected_plugin = available_plugins_listbox.get(available_plugins_listbox.curselection())
+            download_button.config(state=tk.NORMAL)
+            download_button.config(command=lambda: download_plugin(selected_plugin))
+
     plugin_manager_window = tk.Toplevel()
     plugin_manager_window.title("Plugin Manager")
     plugin_manager_window.geometry("400x400")
@@ -356,7 +362,6 @@ def open_plugin_manager():
     title_label = ttk.Label(plugin_manager_window, text="Plugin Manager", font=('Arial', 24, 'bold'), background="#f0f0f0", foreground="#333")
     title_label.pack(pady=(20, 10))
 
-    # Create the plugins folder if it doesn't exist
     plugins_folder = os.path.join(os.path.dirname(__file__), "..", "plugins")
     if os.path.exists(plugins_folder):
         installed_plugins_frame = ttk.LabelFrame(plugin_manager_window, text="Installed Plugins", padding="10")
@@ -377,16 +382,17 @@ def open_plugin_manager():
     available_plugins_frame = ttk.LabelFrame(plugin_manager_window, text="Available Plugins", padding="10")
     available_plugins_frame.pack(pady=(5, 10), padx=20, fill='both', expand=True)
 
-    # Define your custom list of plugins
     custom_plugins = ["tcl_editor.py"]
+    available_plugins_listbox = tk.Listbox(available_plugins_frame, font=('Arial', 12), background="#f0f0f0", foreground="#333")
+    available_plugins_listbox.pack(pady=5, fill='both', expand=True)
 
-    if custom_plugins:
-        for plugin in custom_plugins:
-            plugin_label = ttk.Label(available_plugins_frame, text=plugin, font=('Arial', 12), background="#f0f0f0", foreground="#333")
-            plugin_label.pack(pady=5, anchor='w')
-    else:
-        no_plugins_label = ttk.Label(available_plugins_frame, text="No plugins available", font=('Arial', 12), background="#f0f0f0", foreground="#333")
-        no_plugins_label.pack(pady=5)
+    for plugin in custom_plugins:
+        available_plugins_listbox.insert(tk.END, plugin)
+
+    available_plugins_listbox.bind('<<ListboxSelect>>', on_plugin_select)
+
+    download_button = ttk.Button(plugin_manager_window, text="Download", state=tk.DISABLED)
+    download_button.pack(pady=10)
 
 def download_plugin(plugin_name):
     if not plugin_name:
