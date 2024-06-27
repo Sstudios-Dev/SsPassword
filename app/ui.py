@@ -147,7 +147,10 @@ def open_settings():
     save_button.pack(side='left', padx=(0, 10))
 
     cancel_button = ttk.Button(button_frame, text="Cancel", command=settings_window.destroy, style='TButton', width=10)
-    cancel_button.pack(side='left')
+    cancel_button.pack(side='left', padx=(0, 10))
+
+    open_folder_button = ttk.Button(button_frame, text="Open Theme Folder", command=open_theme_folder, style='TButton', width=18)
+    open_folder_button.pack(side='left')
 
 def get_themes():
     theme_path = os.path.join(os.path.dirname(__file__), "..", "integrity", "theme")
@@ -170,6 +173,16 @@ def save_settings(settings_window, selected_theme, use_default):
             messagebox.showerror("Theme Error", f"Failed to use theme: {e}")
     else:
         messagebox.showerror("Theme Error", f"Theme file not found: {theme_path}")
+
+def open_theme_folder():
+    theme_path = os.path.join(os.path.dirname(__file__), "..", "integrity", "theme")
+    if os.path.exists(theme_path):
+        if os.name == 'nt':  # Windows
+            os.startfile(theme_path)
+        elif os.name == 'posix':  # macOS or Linux
+            subprocess.call(['open', theme_path])
+    else:
+        messagebox.showerror("Folder Error", f"Theme folder not found: {theme_path}")
 
 def save_config(config):
     with open(CONFIG_FILE, 'w') as f:
@@ -222,7 +235,6 @@ def run_main_app():
     file_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Configuration", menu=file_menu)
     file_menu.add_command(label="Style Chooser", command=open_settings)
-    file_menu.add_command(label="Plugin Manager", command=open_plugin_manager)
 
     help_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Help", menu=help_menu)
@@ -351,108 +363,6 @@ def start_login():
     login_button.pack(pady=20)
 
     login_window.mainloop()
-
-def create_plugins_folder():
-    plugins_folder = os.path.join(os.path.dirname(__file__), "..", "plugins")
-    if not os.path.exists(plugins_folder):
-        os.makedirs(plugins_folder)
-
-def open_plugin_manager():
-    def on_plugin_select(event):
-        if available_plugins_listbox.curselection():
-            selected_plugin = available_plugins_listbox.get(available_plugins_listbox.curselection())
-            download_button.config(state=tk.NORMAL)
-            download_button.config(command=lambda: download_plugin(selected_plugin))
-
-    plugin_manager_window = tk.Toplevel()
-    plugin_manager_window.title("Plugin Manager")
-    plugin_manager_window.geometry("400x400")
-    plugin_manager_window.configure(bg="#f0f0f0")
-    plugin_manager_window.resizable(False, False)
-
-    # Añadimos un frame para el canvas y la scrollbar
-    canvas_frame = tk.Frame(plugin_manager_window)
-    canvas_frame.pack(fill=tk.BOTH, expand=True)
-
-    # Creamos un canvas para el scroll
-    canvas = tk.Canvas(canvas_frame, bg="#f0f0f0")
-    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-
-    scrollbar = ttk.Scrollbar(canvas_frame, orient="vertical", command=canvas.yview)
-    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
-    canvas.configure(yscrollcommand=scrollbar.set)
-
-    # Añadimos un frame dentro del canvas
-    scrollable_frame = ttk.Frame(canvas, style='TFrame')
-
-    scrollable_frame.bind(
-        "<Configure>",
-        lambda e: canvas.configure(
-            scrollregion=canvas.bbox("all")
-        )
-    )
-
-    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-
-    title_label = ttk.Label(scrollable_frame, text="Plugin Manager", font=('Arial', 24, 'bold'), background="#f0f0f0", foreground="#333")
-    title_label.pack(pady=(20, 10))
-
-    plugins_folder = os.path.join(os.path.dirname(__file__), "..", "plugins")
-    if os.path.exists(plugins_folder):
-        installed_plugins_frame = ttk.LabelFrame(scrollable_frame, text="Installed Plugins", padding="10")
-        installed_plugins_frame.pack(pady=(10, 5), padx=20, fill='both', expand=True)
-
-        plugins = [f for f in os.listdir(plugins_folder) if os.path.isfile(os.path.join(plugins_folder, f))]
-        if plugins:
-            for plugin in plugins:
-                plugin_label = ttk.Label(installed_plugins_frame, text=plugin, font=('Arial', 12), background="#f0f0f0", foreground="#333")
-                plugin_label.pack(pady=5, anchor='w')
-        else:
-            no_plugins_label = ttk.Label(installed_plugins_frame, text="No plugins installed", font=('Arial', 12), background="#f0f0f0", foreground="#333")
-            no_plugins_label.pack(pady=5)
-    else:
-        create_plugins_folder()
-        messagebox.showinfo("Folder Created", "Plugins folder created. Please restart the application.")
-
-    available_plugins_frame = ttk.LabelFrame(scrollable_frame, text="Available Plugins", padding="10")
-    available_plugins_frame.pack(pady=(5, 10), padx=20, fill='both', expand=True)
-
-    custom_plugins = ["tcl_editor.py"]
-    available_plugins_listbox = tk.Listbox(available_plugins_frame, font=('Arial', 12), background="#f0f0f0", foreground="#333")
-    available_plugins_listbox.pack(pady=5, fill='both', expand=True)
-
-    for plugin in custom_plugins:
-        available_plugins_listbox.insert(tk.END, plugin)
-
-    available_plugins_listbox.bind('<<ListboxSelect>>', on_plugin_select)
-
-    download_button = ttk.Button(scrollable_frame, text="Download", state=tk.DISABLED)
-    download_button.pack(pady=(10, 20))
-
-def download_plugin(plugin_name):
-    if not plugin_name:
-        messagebox.showwarning("Download Plugin", "Please enter a plugin name.")
-        return
-
-    plugin_url = f"https://raw.githubusercontent.com/Sstudios-Dev/SsPassword/main/plugins/{plugin_name}"
-
-    plugins_folder = os.path.join(os.path.dirname(__file__), "..", "plugins")
-    if not os.path.exists(plugins_folder):
-        os.makedirs(plugins_folder)
-
-    plugin_path = os.path.join(plugins_folder, plugin_name)
-
-    try:
-        response = requests.get(plugin_url, stream=True)
-        response.raise_for_status()
-
-        with open(plugin_path, 'wb') as plugin_file:
-            shutil.copyfileobj(response.raw, plugin_file)
-
-        messagebox.showinfo("Download Plugin", f"Plugin '{plugin_name}' downloaded successfully.")
-    except requests.RequestException as e:
-        messagebox.showerror("Download Plugin", f"Failed to download plugin: {e}")
 
 def run_app():
     if check_key():
