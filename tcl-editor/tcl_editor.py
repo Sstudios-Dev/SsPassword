@@ -39,6 +39,7 @@ class TclEditor:
         
         # Bind keyboard shortcuts
         self.root.bind("<Control-s>", lambda event: self.save_file())
+        self.root.bind("<Control-d>", lambda event: self.insert_default_code())
         self.root.bind("<Control-Escape>", lambda event: self.root.quit())
 
     def create_menu(self):
@@ -224,6 +225,15 @@ class TclEditor:
             elif response is None:
                 return False
         return True
+    
+    def insert_default_code(self):
+        default_tcl_file = "example.tcl"
+        try:
+            with open(default_tcl_file, "r") as file:
+                content = file.read()
+            self.text_area.insert(tk.END, content)
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while inserting default code:\n{str(e)}")
 
 if __name__ == "__main__":
     try:
