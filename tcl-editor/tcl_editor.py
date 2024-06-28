@@ -36,7 +36,8 @@ class TclEditor:
         self.create_text_widget()
         self.current_file = None
         self.setup_autocomplete()
-        
+        self.create_info_card()
+
         # Bind keyboard shortcuts
         self.root.bind("<Control-s>", lambda event: self.save_file())
         self.root.bind("<Control-d>", lambda event: self.insert_default_code())
@@ -55,10 +56,13 @@ class TclEditor:
         menubar.add_cascade(label="File", menu=file_menu)
         
         self.root.config(menu=menubar)
-        
+
     def create_text_widget(self):
         self.text_frame = tk.Frame(self.root)
         self.text_frame.pack(fill=tk.BOTH, expand=1)
+
+        self.info_card = tk.Label(self.root, text="Use Ctrl + d to use the default template.", fg="blue")
+        self.info_card.pack(side=tk.TOP, fill=tk.X)
 
         self.line_numbers = LineNumberCanvas(self.text_frame, width=40)
         self.line_numbers.pack(side=tk.LEFT, fill=tk.Y)
@@ -73,6 +77,19 @@ class TclEditor:
         self.text_area.bind("<MouseWheel>", self.on_scroll)
         self.text_area.bind("<Button-4>", self.on_scroll)
         self.text_area.bind("<Button-5>", self.on_scroll)
+
+    def create_info_card(self):
+        self.info_card = tk.Label(self.root, text="", fg="blue")
+        self.info_card.pack(side=tk.TOP, fill=tk.X)
+
+    def show_info(self, message):
+        self.info_card.config(text=message)
+        self.root.update_idletasks()
+
+    def hide_info(self):
+        self.info_card.config(text="")
+        self.root.update_idletasks()
+
 
     def setup_autocomplete(self):
         self.autocomplete_words = ['proc', 'set', 'if', 'else', 'foreach', 'while', 'expr', 'return', 'puts', 'list', 'array', 'namespace']
