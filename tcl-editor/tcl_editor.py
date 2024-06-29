@@ -64,6 +64,9 @@ class TclEditor:
         self.info_card = tk.Label(self.root, text="Use Ctrl + d to use the default template.", fg="blue")
         self.info_card.pack(side=tk.TOP, fill=tk.X)
 
+        self.info_card = tk.Label(self.root, text="version: 1.0.0", fg="blue")
+        self.info_card.pack(side=tk.TOP, fill=tk.X)
+
         self.line_numbers = LineNumberCanvas(self.text_frame, width=40)
         self.line_numbers.pack(side=tk.LEFT, fill=tk.Y)
 
@@ -92,7 +95,7 @@ class TclEditor:
 
 
     def setup_autocomplete(self):
-        self.autocomplete_words = ['proc', 'set', 'if', 'else', 'foreach', 'while', 'expr', 'return', 'puts', 'list', 'array', 'namespace']
+        self.autocomplete_words = ['proc', 'set', 'if', 'else', 'foreach', 'while', 'expr', 'return', 'puts', 'list', 'array', 'namespace', 'package', 'ifneeded', 'variable', 'eval', '::ttk::theme::', 'version']
         self.autocomplete_listbox = None
 
     def on_key_release(self, event):
