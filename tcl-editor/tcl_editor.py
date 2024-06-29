@@ -104,15 +104,45 @@ class TclEditor:
             self.show_autocomplete()
 
     def on_key_press(self, event):
-        if event.keysym == "Tab":
-            self.text_area.insert(tk.INSERT, " " * 4)
-            return "break"
-        if self.autocomplete_listbox:
-            if event.keysym in ('Return', 'Tab'):
-                self.insert_autocomplete()
-                return 'break'
-            elif event.keysym == 'Escape':
-                self.hide_autocomplete()
+      if event.keysym == "Tab":
+        # Insertar 4 espacios en lugar de una tabulación
+        self.text_area.insert(tk.INSERT, " " * 4)
+        return "break"
+      if self.autocomplete_listbox:
+        if event.keysym in ('Return', 'Tab'):
+            self.insert_autocomplete()
+            return 'break'
+        elif event.keysym == 'Escape':
+            self.hide_autocomplete()
+
+    def highlight_syntax(self):
+        content = self.text_area.get("1.0", tk.END)
+        self.text_area.mark_set("range_start", "1.0")
+
+        for tag in self.text_area.tag_names():
+            self.text_area.tag_delete(tag)
+
+        
+        last_pos = "1.0"
+        for token, content in lex(content, TclLexer()):
+            start = self.text_area.index("range_start")
+            end = self.text_area.index("range_start + %dc" % len(content))
+            self.text_area.mark_set("range_end", end)
+            self.text_area.tag_add(str(token), start, end)
+            self.text_area.mark_set("range_start", end)
+        
+        style = get_style_by_name('default')
+        for token, settings in style.styles.items():
+            if settings:
+                color = next((part for part in settings.split() if part.startswith('#')), None)
+                if color:
+                    self.text_area.tag_configure(str(token), foreground=color)
+        
+        self.apply_additional_formatting()
+
+    def apply_additional_formatting(self):
+        self.text_area.tag_configure("brace", lmargin1=10, lmargin2=10)
+        self.text_area.tag_add("brace", "1.0", tk.END)
 
     def on_scroll(self, event):
         self.line_numbers.redraw()
